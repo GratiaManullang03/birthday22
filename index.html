@@ -1,153 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<!-- Required meta tags -->
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, shrink-to-fit=no"
-		/>
-
-		<!-- Bootstrap CSS -->
-		<link
-			rel="stylesheet"
-			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-			crossorigin="anonymous"
-		/>
-		<link
-			href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&display=swap"
-			rel="stylesheet"
-		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"
-		/>
-		<link rel="stylesheet" href="style.css" />
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Sebuah Kuis Spesial Untukmu</title>
 		<link rel="shortcut icon" type="image/x-icon" href="./img/hbd.png" />
-		<title>Happy Birthday!</title>
-	</head>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<style>
+			@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap');
 
+			:root {
+				--primary-color: #667eea;
+				--secondary-color: #764ba2;
+				--danger-color: #ff6b6b;
+				--text-color: #333;
+				--bg-color: #f4f7f6;
+				--card-bg: #ffffff;
+			}
+
+			body,
+			html {
+				margin: 0;
+				font-family: 'Quicksand', sans-serif;
+				background-color: var(--bg-color);
+				background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
+				text-align: center;
+				min-height: 100vh;
+				padding: 50px 20px;
+				box-sizing: border-box;
+				overflow-y: auto;
+			}
+
+			main {
+				background-color: var(--card-bg);
+				padding: 30px 40px;
+				border-radius: 20px;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+				width: 100%;
+				max-width: 800px;
+				animation: fadeIn 1s ease-in-out;
+			}
+
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+					transform: scale(0.95);
+				}
+				to {
+					opacity: 1;
+					transform: scale(1);
+				}
+			}
+
+			h1 {
+				color: var(--text-color);
+				font-weight: 700;
+				margin-bottom: 10px;
+			}
+			p {
+				color: #777;
+				margin-bottom: 30px;
+			}
+
+			.form-columns {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 40px;
+				margin-bottom: 30px;
+			}
+
+			.question-group {
+				margin-bottom: 25px;
+				text-align: left;
+			}
+			.question-group label {
+				display: block;
+				font-weight: 500;
+				color: var(--text-color);
+				margin-bottom: 10px;
+			}
+			.input-field {
+				width: 100%;
+				padding: 12px;
+				border: 1px solid #ddd;
+				border-radius: 8px;
+				box-sizing: border-box;
+				font-family: 'Quicksand', sans-serif;
+				font-size: 16px;
+				transition: border-color 0.3s, box-shadow 0.3s;
+			}
+			.input-field:focus {
+				outline: none;
+				border-color: var(--primary-color);
+				box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+			}
+			.choice-container {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+			}
+			.choice-label {
+				display: flex;
+				align-items: center;
+				padding: 12px;
+				border: 1px solid #ddd;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: background-color 0.3s, border-color 0.3s;
+			}
+			.choice-label:hover {
+				background-color: #f9f9f9;
+			}
+			.choice-label input {
+				margin-right: 12px;
+				transform: scale(1.2);
+			}
+			.submit-btn {
+				width: 100%;
+				padding: 15px;
+				border: none;
+				border-radius: 8px;
+				background: linear-gradient(
+					135deg,
+					var(--primary-color) 0%,
+					var(--secondary-color) 100%
+				);
+				color: white;
+				font-size: 18px;
+				font-weight: 700;
+				cursor: pointer;
+				transition: transform 0.2s, box-shadow 0.3s;
+			}
+			.submit-btn:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+			}
+			#error-message {
+				color: var(--danger-color);
+				margin-top: 15px;
+				font-weight: 500;
+				min-height: 24px;
+			}
+			.shake {
+				animation: shake 0.5s ease-in-out;
+			}
+
+			@keyframes shake {
+				0%,
+				100% {
+					transform: translateX(0);
+				}
+				10%,
+				30%,
+				50%,
+				70%,
+				90% {
+					transform: translateX(-5px);
+				}
+				20%,
+				40%,
+				60%,
+				80% {
+					transform: translateX(5px);
+				}
+			}
+
+			@media (max-width: 768px) {
+				.form-columns {
+					grid-template-columns: 1fr;
+					gap: 0;
+				}
+				main {
+					padding: 20px;
+				}
+				body,
+				html {
+					padding: 20px 10px;
+				}
+			}
+
+			/* === STYLE KUSTOM UNTUK SWEETALERT === */
+			.custom-swal-popup {
+				background: #fff0f5 !important; /* Warna background pink muda (Lavender Blush) */
+				border-radius: 20px !important;
+			}
+			.custom-swal-title {
+				color: #d63384 !important; /* Warna teks pink tua */
+				font-weight: 500 !important;
+			}
+			.custom-swal-icon {
+				border-color: transparent !important; /* Hapus border default dari ikon */
+			}
+			.custom-swal-icon .love-icon {
+				font-size: 2em; /* Membuat ikon hati menjadi besar */
+				line-height: 1;
+				animation: beat 0.8s infinite; /* Menambahkan animasi berdetak */
+			}
+			@keyframes beat {
+				0%,
+				100% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.2);
+				}
+			}
+			.pink-progress-bar {
+				background: #f472b6 !important;
+			}
+		</style>
+	</head>
 	<body>
 		<audio
 			id="background-music"
-			src="./music/RickyMontgomery-LineWithoutaHook.m4a"
+			src="./music/kuis.mp3"
 			preload="auto"
+			loop
 		></audio>
 
-		<div class="bg" id="content">
-			<div class="container" id="timer">
-				<h5>Countdown to <x id="name"></x> birthday :</h5>
-				<ul>
-					<li><span id="days"></span>days</li>
-					<li><span id="hours"></span>Hours</li>
-					<li><span id="minutes"></span>Minutes</li>
-					<li><span id="seconds"></span>Seconds</li>
-				</ul>
-			</div>
+		<main id="quiz-container">
+			<h1>Kuis Spesial!</h1>
+			<p>Buktikan kamu orang yang tepat dengan menjawab pertanyaan ini ya!</p>
 
-			<div
-				id="slideSatu"
-				class="animate__animated animate__slideInDown animate__slow d-none"
-			>
-				<img src="./img/hbd1.png" class="img" />
-			</div>
-
-			<div
-				id="slideDua"
-				class="slides d-none paper animate__zoomInDown animate__animated animate__delay-2s animate__slow"
-			>
-				<div class="paper-content">
-					<p id="teks1" class="teks"></p>
-				</div>
-			</div>
-
-			<div
-				id="slideTiga"
-				class="slides d-none paper animate__fadeInRight animate__animated"
-			>
-				<div class="paper-content">
-					<p id="teks2" class="teks"></p>
-				</div>
-			</div>
-
-			<!-- Gallery Section -->
-			<div
-				id="slideGallery"
-				class="slides d-none animate__animated animate__fadeIn animate__slow"
-			>
-				<h3 class="mb-4" style="color: #333; font-weight: 300">
-					Our Beautiful Moments Together
-				</h3>
-				<div class="gallery-container">
-					<div class="gallery-wrapper">
-						<div class="gallery-track" id="galleryTrack">
-							<!-- Gallery slides will be generated by JavaScript -->
+			<form id="quiz-form">
+				<div class="form-columns">
+					<div class="form-column-left">
+						<div class="question-group">
+							<label for="nama">Siapakah nama lengkapku?</label>
+							<input type="text" id="nama" class="input-field" required />
 						</div>
-						<div class="gallery-frame"></div>
-						<div class="gallery-nav prev" onclick="galleryPrev()">
-							<span>‹</span>
-						</div>
-						<div class="gallery-nav next" onclick="galleryNext()">
-							<span>›</span>
+
+						<div class="question-group">
+							<label>Tanggal berapa aku berulang tahun?</label>
+							<div class="choice-container">
+								<label class="choice-label">
+									<input type="radio" name="tanggal" value="21" /> 21 Juni
+								</label>
+								<label class="choice-label">
+									<input type="radio" name="tanggal" value="06" /> 06 Juni
+								</label>
+								<label class="choice-label">
+									<input type="radio" name="tanggal" value="12" /> 12 Juli
+								</label>
+							</div>
 						</div>
 					</div>
-					<div class="gallery-dots" id="galleryDots"></div>
-				</div>
-			</div>
 
-			<div
-				class="kotak d-none slides animate__animated animate__fadeInDown animate__delay-2s"
-				id="slideEmpat"
-			>
-				<div class="row">
-					<div class="col-sm mt-1">
-						<h5>Kamu suka nggak? 🥺</h5>
+					<div class="form-column-right">
+						<div class="question-group">
+							<label>Mana saja hal yang paling aku sukai?</label>
+							<div class="choice-container">
+								<label class="choice-label">
+									<input type="checkbox" name="suka" value="kucing" /> Kucing
+								</label>
+								<label class="choice-label">
+									<input type="checkbox" name="suka" value="bunga" /> Bunga
+								</label>
+								<label class="choice-label">
+									<input type="checkbox" name="suka" value="satepadang" /> Sate
+									Padang
+								</label>
+								<label class="choice-label">
+									<input type="checkbox" name="suka" value="durian" /> Durian
+								</label>
+								<label class="choice-label">
+									<input type="checkbox" name="suka" value="gratia" /> Gratia
+								</label>
+								<label class="choice-label">
+									<input type="checkbox" name="suka" value="hujan" /> Aroma
+									Hujan
+								</label>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="row mt-3">
-					<div class="col-5 offset-1">
-						<button id="gak" class="btn">
-							<span style="font-size: 20px">😤</span> Gak!
-						</button>
-					</div>
-					<div class="col-5">
-						<button id="suka" class="btn">
-							<span style="font-size: 20px">😍</span> Suka!!
-						</button>
-					</div>
-				</div>
-			</div>
 
-			<div
-				id="slideLima"
-				class="d-none animate__bounceIn animate__animated animate__slow"
-			>
-				<i class="fas fa-heart fa-5x text-danger"></i>
-			</div>
-			<p id="trims" class="text-muted d-none mt-2"></p>
+				<button type="submit" class="submit-btn">Kirim Jawaban</button>
+				<div id="error-message"></div>
+			</form>
+		</main>
 
-			<p
-				id="tap"
-				class="d-none animate__animated animate__pulse text-muted animate__slow animate__repeat-3"
-			>
-				Ketuk untuk melanjutkan
-			</p>
+		<script>
+			// --- KONFIGURASI JAWABAN BENAR ---
+			const NAMA_BENAR = "Adinda Halimatus Sa'diah";
+			const TANGGAL_BENAR = '06';
+			const SUKA_BENAR = ['kucing', 'satepadang', 'durian', 'gratia'];
 
-			<footer class="page-footer font-small blue fixed-bottom"></footer>
-		</div>
+			const quizForm = document.getElementById('quiz-form');
+			const errorMessage = document.getElementById('error-message');
+			const quizContainer = document.getElementById('quiz-container');
+			const music = document.getElementById('background-music');
 
-		<!-- Scripts -->
-		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-		<script
-			src="https://kit.fontawesome.com/61e5120832.js"
-			crossorigin="anonymous"
-		></script>
-		<script src="https://cdn.jsdelivr.net/npm/typeit@7.0.4/dist/typeit.min.js"></script>
-		<script src="https://momentjs.com/downloads/moment.js"></script>
-		<script src="https://momentjs.com/downloads/moment-with-locales.js"></script>
-		<script src="https://momentjs.com/downloads/moment-timezone-with-data.js"></script>
-		<script src="script.js"></script>
+			function playMusic() {
+				music.muted = true;
+				const playPromise = music.play();
+				if (playPromise !== undefined) {
+					playPromise
+						.then(() => (music.muted = false))
+						.catch((error) =>
+							console.log('Musik akan diputar setelah interaksi pengguna.')
+						);
+				}
+			}
+
+			document.body.addEventListener('click', playMusic, { once: true });
+
+			quizForm.addEventListener('submit', function (event) {
+				event.preventDefault();
+				errorMessage.textContent = '';
+				quizContainer.classList.remove('shake');
+
+				const inputNama = document
+					.getElementById('nama')
+					.value.trim()
+					.toLowerCase();
+				const isNamaBenar = inputNama === NAMA_BENAR.toLowerCase();
+				const radioTanggal = document.querySelector(
+					'input[name="tanggal"]:checked'
+				);
+				const isTanggalBenar = radioTanggal
+					? radioTanggal.value === TANGGAL_BENAR
+					: false;
+				const checkboxSuka = document.querySelectorAll(
+					'input[name="suka"]:checked'
+				);
+				let jawabanSuka = [];
+				checkboxSuka.forEach((item) => jawabanSuka.push(item.value));
+				const isSukaBenar =
+					jawabanSuka.length === SUKA_BENAR.length &&
+					SUKA_BENAR.every((item) => jawabanSuka.includes(item));
+
+				if (isNamaBenar && isTanggalBenar && isSukaBenar) {
+					Swal.fire({
+						title: 'Yeay, jawabanmu benar semua! Selamat datang, sayang ❤️',
+						iconHtml: '<div class="love-icon">❤️</div>',
+						timer: 4000,
+						timerProgressBar: true,
+						showConfirmButton: false,
+						allowOutsideClick: false,
+						customClass: {
+							popup: 'custom-swal-popup',
+							title: 'custom-swal-title',
+							icon: 'custom-swal-icon',
+							timerProgressBar: 'pink-progress-bar',
+						},
+					}).then((result) => {
+						if (result.dismiss === Swal.DismissReason.timer) {
+							window.location.href = 'main.html';
+						}
+					});
+				} else {
+					errorMessage.textContent =
+						'Oops, sepertinya ada jawaban yang salah. Coba lagi ya!';
+					quizContainer.classList.add('shake');
+				}
+			});
+		</script>
 	</body>
 </html>
